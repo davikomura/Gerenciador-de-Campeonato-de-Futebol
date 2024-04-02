@@ -23,7 +23,7 @@ Este é um simulador simples de resultados de jogos de futebol do Campeonato Bra
 
 1. Defina a "força" de cada time no arquivo `simulador_campeonato.py`.
 2. Execute o script `teste.py` para simular os resultados.
-3. Veja a tabela de classificação gerada no arquivo `output.png`.
+3. Veja a tabela de classificação gerada no arquivo `output_teste.png`.
 
 ## Executando o Simulador
 
@@ -41,4 +41,4 @@ Este é um simulador simples de resultados de jogos de futebol do Campeonato Bra
 
 ## Exemplo de saída
 
-![Tabela de Classificação](output_test.png)
+![Tabela de Classificação](output_teste.png)
