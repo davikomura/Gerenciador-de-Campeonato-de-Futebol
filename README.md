@@ -1,4 +1,3 @@
-```markdown
 # Championship Management System
 
 This project is a Python-based system for managing and simulating a championship league across multiple divisions. It includes functionalities for processing data, managing the championship structure, and simulating matches.
@@ -54,5 +53,3 @@ Contributions are welcome! Please fork the repository and create a pull request 
 ### Authors
 
 - [Davi Komura](https://github.com/davikomura) - Software Engineer
-
-```
