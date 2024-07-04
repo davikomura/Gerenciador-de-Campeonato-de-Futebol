@@ -3,164 +3,171 @@ import pandas as pd
 import numpy as np
 # import dataframe_image as dfi
 
-def resultado(ForcaA, ForcaB):
+def result(StrengthA, StrengthB):
+    space = StrengthA + StrengthB
 
-    espaco = ForcaA + ForcaB
+    # Generate random goals based on team strengths
+    randA = randint(0, StrengthA)
+    goalsA = int(randA * ((StrengthA + randint(0, 10 - StrengthB)) / space))
 
-    sorteA = randint(0, ForcaA)
-    golA = int(sorteA * ((ForcaA + randint(0, 10 - ForcaB))/espaco))
+    randB = randint(0, StrengthB)
+    goalsB = int(randB * ((StrengthB + randint(0, 10 - StrengthA)) / space))
 
-    sorteB = randint(0, ForcaB)
-    golB = int(sorteB * ((ForcaB + randint(0, 10 - ForcaA))/espaco))
+    # Ensure goals are non-negative
+    if goalsA < 0:
+        goalsA = 0
+    if goalsB < 0:
+        goalsB = 0
 
-    if golA < 0:
-        golA = 0
+    return [goalsA, goalsB]
 
-    if golB < 0:
-        golB = 0
+def round(teams):
+    games = []
 
-    return [golA, golB]
+    for i in range(len(teams)):
+        for j in range(i + 1, len(teams)):
+            teamA, teamB = teams[i], teams[j]
 
-def turno(times):
-    
-    jogos = []
-    
-    for i in range(len(times)):
-        j = i + 1
-        while j < len(times):
-            A, B = times[i], times[j]
-            #p = ("{} x {}".format(A['Time'], B['Time']))
-            x = resultado(int(A['Nível']), int(B['Nível']))
-            x2 = resultado(int(A['Nível']), int(B['Nível']))
-            z = [A['Time'], B['Time']]
-            z2 = [A['Time'], B['Time']]
-            w = ('{} {} x {} {}'.format(z[0], x[0], x[1], z[1]))
-            w2 = ('{} {} x {} {}'.format(z2[0], x2[0], x2[1], z2[1]))
-                        
-            placar = z + x
-            placar2 = z2 + x2
-            
-            j += 1
-            jogos.append(placar)
-            jogos.append(placar2)
-            
-    df = pd.DataFrame(jogos, columns=['Time A', 'Time B', 'Gols Time A', 'Gols Time B'])
-    
-    conditionlist = [
-        (df['Gols Time A']> df['Gols Time B']),
-        (df['Gols Time A'] < df['Gols Time B']),
-        (df['Gols Time A'] == df['Gols Time B'])]
-    choicelist = [df['Time A'], df['Time B'], 'Empate']
-    df['Vencedor'] = np.select(conditionlist, choicelist)
-    
-    df["Placar"] = df['Gols Time A'].map(str) + "x" + df['Gols Time B'].map(str)
+            # Simulate two games between each pair of teams
+            result1 = result(int(teamA['Level']), int(teamB['Level']))
+            result2 = result(int(teamA['Level']), int(teamB['Level']))
 
-    
+            # Format results
+            game1 = [teamA['Team'], teamB['Team']] + result1
+            game2 = [teamA['Team'], teamB['Team']] + result2
+
+            games.append(game1)
+            games.append(game2)
+
+    # Create DataFrame with game results
+    df = pd.DataFrame(games, columns=['Team A', 'Team B', 'Goals Team A', 'Goals Team B'])
+
+    # Determine winners and add to DataFrame
+    conditions = [
+        (df['Goals Team A'] > df['Goals Team B']),
+        (df['Goals Team A'] < df['Goals Team B']),
+        (df['Goals Team A'] == df['Goals Team B'])
+    ]
+    choices = [df['Team A'], df['Team B'], 'Draw']
+    df['Winner'] = np.select(conditions, choices)
+
+    # Create string representation of scores
+    df["Score"] = df['Goals Team A'].map(str) + "x" + df['Goals Team B'].map(str)
+
     return df
 
-def numeroDeVitorias(data, clube):
+def numberOfWins(data, club):
     df = data.apply(lambda x: x.str.strip() if isinstance(x, str) else x)
-    filter = df["Vencedor"] == clube
-    return (data[filter]['Vencedor'].count()).astype(np.int64)
+    filter = df["Winner"] == club
+    return (data[filter]['Winner'].count()).astype(np.int64)
 
-def numeroDeJogos(data, clube):
+def numberOfGames(data, club):
     df = data.apply(lambda x: x.str.strip() if isinstance(x, str) else x)
-    filter1 = df["Time A"] == clube
-    filter2 = df["Time B"] == clube
-    return (data[filter1]["Time A"].count() + data[filter2]["Time B"].count()).astype(np.int64)
+    filter1 = df["Team A"] == club
+    filter2 = df["Team B"] == club
+    return (data[filter1]["Team A"].count() + data[filter2]["Team B"].count()).astype(np.int64)
 
-def getPoints(data, clube):
+def getPoints(data, club):
     df = data.apply(lambda x: x.strip() if isinstance(x, str) else x)
-    filter1 = df["Time A"] == clube
-    filter2 = df["Time B"] == clube
-    filter3 = df["Vencedor"] == clube
-    filter4 = (df["Time A"] == clube) | (df["Time B"] == clube)
-    filter5 = df["Vencedor"] == 'Empate'
+    filter1 = df["Team A"] == club
+    filter2 = df["Team B"] == club
+    filter3 = df["Winner"] == club
+    filter4 = (df["Team A"] == club) | (df["Team B"] == club)
+    filter5 = df["Winner"] == 'Draw'
 
-    v1 = data[(filter1) & (filter3)]
-    v1 = v1['Vencedor'].count()
-    v2 = data[(filter2) & (filter3)]
-    v2 = v2['Vencedor'].count() 
-    v3 = data[(filter4) & (filter5)]
-    v3 = v3['Vencedor'].count()
-    return ((v2*3)+(v1*3)+v3).astype(np.int64)
+    wins_as_team_a = data[(filter1) & (filter3)]
+    wins_as_team_b = data[(filter2) & (filter3)]
+    draws = data[(filter4) & (filter5)]
 
-def numeroDeEmpates(data, clube):
+    points = (wins_as_team_a['Winner'].count() * 3) + (wins_as_team_b['Winner'].count() * 3) + draws['Winner'].count()
+    return points.astype(np.int64)
+
+def numberOfDraws(data, club):
     df = data.apply(lambda x: x.str.strip() if isinstance(x, str) else x)
-    filter1 = (df["Time A"] == clube) | (df["Time B"] == clube)
-    filter2 = df["Vencedor"] == 'Empate'
+    filter1 = (df["Team A"] == club) | (df["Team B"] == club)
+    filter2 = df["Winner"] == 'Draw'
     df = data[(filter1) & (filter2)]
-    empates = df['Vencedor'].count()
-    return empates.astype(np.int64)
+    draws = df['Winner'].count()
+    return draws.astype(np.int64)
 
-def numeroDeDerrotas(data, clube):
+def numberOfLosses(data, club):
     df = data.apply(lambda x: x.str.strip() if isinstance(x, str) else x)
-    filter1 = (df["Time A"] == clube) | (df["Time B"] == clube)
-    filter2 = (df["Vencedor"]!= clube) & (df["Vencedor"] != 'Empate')
+    filter1 = (df["Team A"] == club) | (df["Team B"] == club)
+    filter2 = (df["Winner"] != club) & (df["Winner"] != 'Draw')
     df = data[(filter1) & (filter2)]
-    derrotas = df['Vencedor'].count()
-    return derrotas.astype(np.int64)
+    losses = df['Winner'].count()
+    return losses.astype(np.int64)
 
-def getGP(data, clube ):
+def getGoalsForAndAgainst(data, club):
     df = data.apply(lambda x: x.str.strip() if isinstance(x, str) else x)
-    filter1  =  df["Time A"] == clube
-    filter2  =  df["Time B"] == clube
-    df1      =  data[(filter1)]
-    df2      =  data[(filter2)]
-    placar1  =  df1['Placar'].str.split('x')
-    placar2  =  df2['Placar'].str.split('x')
+    filter1 = df["Team A"] == club
+    filter2 = df["Team B"] == club
+    team_as_a = data[(filter1)]
+    team_as_b = data[(filter2)]
+    scores_as_a = team_as_a['Score'].str.split('x')
+    scores_as_b = team_as_b['Score'].str.split('x')
 
-    gp       =  0
-    gc       =  0
-    for g1, g2 in placar1:
-        gp = (gp + pd.to_numeric( g1 ))
-        gc = (gc + pd.to_numeric( g2 ))
+    goals_for = 0
+    goals_against = 0
 
-    for g1, g2 in placar2:
-        gp = (gp + pd.to_numeric( g2 )) 
-        gc = (gc + pd.to_numeric( g1 ))
-    return gp, gc
+    for g1, g2 in scores_as_a:
+        goals_for += pd.to_numeric(g1)
+        goals_against += pd.to_numeric(g2)
 
-def tabela(times):
+    for g1, g2 in scores_as_b:
+        goals_for += pd.to_numeric(g2)
+        goals_against += pd.to_numeric(g1)
 
-    df = turno(times)
+    return goals_for, goals_against
+
+def standings(teams):
+    df = round(teams)
     
-    clubs = [x['Time'] for x in times]
+    # Create DataFrame with team names
+    clubs = [x['Team'] for x in teams]
+    clubs_series = pd.Series(clubs, name="Teams")
+    clubs_df = clubs_series.to_frame()
     
-    cb  =  pd.Series(clubs, name="Times")
-    cb  =  cb.to_frame()
-    
-    dfTable = cb[["Times"]].copy()
-    for column in ["PG", "J", "V", "E", "D", "GP", "GC", "SG"]:
-        dfTable[column] = 0
+    # Initialize DataFrame for standings
+    dfTable = clubs_df[["Teams"]].copy()
+    dfTable["Points"] = 0
+    dfTable["Games Played"] = 0
+    dfTable["Wins"] = 0
+    dfTable["Draws"] = 0
+    dfTable["Losses"] = 0
+    dfTable["Goals For"] = 0
+    dfTable["Goals Against"] = 0
+    dfTable["Goal Difference"] = 0
 
+    # Fill in standings data for each team
     for index, row in dfTable.iterrows():
-        c1  =  row['Times']
-        c1  =  c1.strip()
+        club = row['Teams'].strip()
         
-        pg = getPoints(df, c1)
-        j = numeroDeJogos(df, c1)
-        v = numeroDeVitorias(df, c1)
-        e = numeroDeEmpates(df, c1)
-        d = numeroDeDerrotas(df, c1)
-        gp, gc = getGP(df, c1)
+        points = getPoints(df, club)
+        games_played = numberOfGames(df, club)
+        wins = numberOfWins(df, club)
+        draws = numberOfDraws(df, club)
+        losses = numberOfLosses(df, club)
+        goals_for, goals_against = getGoalsForAndAgainst(df, club)
+        goal_difference = goals_for - goals_against
         
-        dfTable.at[index, 'PG'] = pg
-        dfTable.at[index, 'J']  = j
-        dfTable.at[index, 'V']  = v
-        dfTable.at[index, 'E']  = e
-        dfTable.at[index, 'D']  = d
-        dfTable.at[index, 'GP'] = gp
-        dfTable.at[index, 'GC'] = gc
-        dfTable.at[index, 'SG'] = gp - gc
-        
-    dfTable['Times'] = dfTable['Times'].str.capitalize() 
-    dfTable = dfTable.sort_values(by=['PG', 'SG', 'V', 'GP'], ascending=False)
+        dfTable.at[index, 'Points'] = points
+        dfTable.at[index, 'Games Played'] = games_played
+        dfTable.at[index, 'Wins'] = wins
+        dfTable.at[index, 'Draws'] = draws
+        dfTable.at[index, 'Losses'] = losses
+        dfTable.at[index, 'Goals For'] = goals_for
+        dfTable.at[index, 'Goals Against'] = goals_against
+        dfTable.at[index, 'Goal Difference'] = goal_difference
+
+    # Format team names and sort by points, goal difference, wins, and goals scored
+    dfTable['Teams'] = dfTable['Teams'].str.capitalize()
+    dfTable = dfTable.sort_values(by=['Points', 'Goal Difference', 'Wins', 'Goals For'], ascending=False)
     dfTable = dfTable.reset_index(drop=True)
-    dfTable.index = pd.RangeIndex(start=1, stop=len(dfTable['Times'])+1, step=1)
+    dfTable.index = pd.RangeIndex(start=1, stop=len(dfTable['Teams']) + 1, step=1)
     
     return dfTable
 
-# def imagem_df(x, y):
-#     df = tabela(x)
+# def image_df(x, y):
+#     df = standings(x)
 #     dfi.export(df, y)

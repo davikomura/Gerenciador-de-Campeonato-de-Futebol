@@ -1,51 +1,51 @@
-from simulator.simulate_championship import tabela
+from simulator.simulate_championship import standings
 import pandas as pd
 
-def gerenciar_campeonato(divisoes):
-    # Armazenar as tabelas de cada divisão
-    tabelas = []
+def manage_championship(divisions):
+    # Store tables for each division
+    tables = []
 
-    # Gerar as tabelas para cada divisão
-    for i, divisao in enumerate(divisoes):
-        tabela_divisao = tabela(divisao)
-        tabelas.append(tabela_divisao)
-        print(f"Tabela da Divisão {i+1}:")
-        print(tabela_divisao)
+    # Generate tables for each division
+    for i, division in enumerate(divisions):
+        division_table = standings(division)
+        tables.append(division_table)
+        print(f"Table of Division {i+1}:")
+        print(division_table)
         print("\n")
 
-    # Realizar as promoções e rebaixamentos
-    for i in range(len(divisoes) - 1):
-        rebaixados = tabelas[i].iloc[-4:]['Times'].tolist()
-        promovidos = tabelas[i+1].iloc[:4]['Times'].tolist()
+    # Perform promotions and relegations
+    for i in range(len(divisions) - 1):
+        relegated_teams = tables[i].iloc[-4:]['Teams'].tolist()
+        promoted_teams = tables[i+1].iloc[:4]['Teams'].tolist()
 
-        print(f"Rebaixados da Divisão {i+1} para Divisão {i+2}: {rebaixados}")
-        print(f"Promovidos da Divisão {i+2} para Divisão {i+1}: {promovidos}")
+        print(f"Relegated from Division {i+1} to Division {i+2}: {relegated_teams}")
+        print(f"Promoted from Division {i+2} to Division {i+1}: {promoted_teams}")
 
-        # Rebaixar times
-        for time in rebaixados:
-            for team in divisoes[i]:
-                if team['Time'].capitalize() == time:
-                    divisoes[i+1].append(team)
-                    divisoes[i].remove(team)
+        # Relegate teams
+        for team_name in relegated_teams:
+            for team in divisions[i]:
+                if team['Team'].capitalize() == team_name:
+                    divisions[i+1].append(team)
+                    divisions[i].remove(team)
                     break
 
-        # Promover times
-        for time in promovidos:
-            for team in divisoes[i+1]:
-                if team['Time'].capitalize() == time:
-                    divisoes[i].append(team)
-                    divisoes[i+1].remove(team)
+        # Promote teams
+        for team_name in promoted_teams:
+            for team in divisions[i+1]:
+                if team['Team'].capitalize() == team_name:
+                    divisions[i].append(team)
+                    divisions[i+1].remove(team)
                     break
 
-    # Promover da última divisão
-    promovidos_ultima_divisao = tabelas[-1].iloc[:4]['Times'].tolist()
-    print(f"Promovidos da última divisão (Divisão {len(divisoes)}) para Divisão {len(divisoes)-1}: {promovidos_ultima_divisao}")
+    # Promote from the last division
+    promoted_from_last_division = tables[-1].iloc[:4]['Teams'].tolist()
+    print(f"Promoted from the last division (Division {len(divisions)}) to Division {len(divisions)-1}: {promoted_from_last_division}")
 
-    for time in promovidos_ultima_divisao:
-        for team in divisoes[-1]:
-            if team['Time'].capitalize() == time:
-                divisoes[-2].append(team)
-                divisoes[-1].remove(team)
+    for team_name in promoted_from_last_division:
+        for team in divisions[-1]:
+            if team['Team'].capitalize() == team_name:
+                divisions[-2].append(team)
+                divisions[-1].remove(team)
                 break
 
-    return divisoes
+    return divisions
