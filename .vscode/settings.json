@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "./gerenciamento_campeonato"
+    ]
+}
