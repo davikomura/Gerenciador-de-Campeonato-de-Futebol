@@ -1,44 +1,58 @@
-# Brasileirão Simulator
+```markdown
+# Championship Management System
 
-Este é um simulador simples de resultados de jogos de futebol do Campeonato Brasileiro. O código gera resultados aleatórios com base em uma "força" atribuída a cada time e apresenta uma tabela de classificação com base nos resultados simulados.
+This project is a Python-based system for managing and simulating a championship league across multiple divisions. It includes functionalities for processing data, managing the championship structure, and simulating matches.
 
-## Funcionalidades
+## Project Structure
 
-- Simulação de resultados de jogos do Campeonato Brasileiro.
-- Cálculo da tabela de classificação com base nos resultados simulados.
+The project structure is organized into several directories:
 
-## Estrutura do Projeto
+- `main.py`: Entry point for executing the championship management system.
+- `LICENSE`: License information for the project.
+- `README.md`: This file, providing an overview of the project.
+- `requirements.txt`: List of Python dependencies required for the project.
+- `.vscode/settings.json`: VS Code specific settings for the project.
 
-- `simulador_campeonato.py`: Contém as funções para simulação de resultados e cálculo da tabela de classificação.
-- `teste.py`: Arquivo de teste para importar e executar o simulador de campeonato.
+### Directories
 
-## Requisitos
+- `data/`: Contains `data.json` file with information about teams and their respective levels.
+- `data_processing/`: Python module for processing data, including reading and parsing `data.json`.
+- `championship_management/`: Module for managing the championship structure, including promotion and relegation logic.
+- `simulator/`: Module for simulating matches and generating league tables.
 
-- Python 3.x
-- pandas
-- numpy
-- dataframe_image
+### Usage
 
-## Como usar
+1. **Setup:**
+   - Clone the repository: `git clone https://github.com/davikomura/championship-management.git`
+   - Navigate into the project directory: `cd championship-management`
+   - Install dependencies: `pip install -r requirements.txt`
 
-1. Defina a "força" de cada time no arquivo `simulador_campeonato.py`.
-2. Execute o script `teste.py` para simular os resultados.
-3. Veja a tabela de classificação gerada no arquivo `output_teste.png`.
+2. **Running the Championship Management System:**
+   - Execute `main.py` to start the system: `python main.py`
 
-## Executando o Simulador
+3. **Functionality:**
+   - **Data Processing:** Parses `data.json` to retrieve team information.
+   - **Championship Management:** Manages the structure of the championship, including divisions, promotion, and relegation.
+   - **Simulation:** Simulates matches and generates league tables based on predefined team data.
 
-1. Instale as dependências:
+### Dependencies
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+Ensure you have Python 3.x installed. Install required dependencies using `pip`:
 
-2. Execute o script de teste:
+```bash
+pip install -r requirements.txt
+```
 
-   ```bash
-   python teste.py
-   ```
+### License
 
-## Exemplo de saída
+This project is licensed under the MIT License. See the `LICENSE` file for details.
 
-![Tabela de Classificação](output_teste.png)
+### Contributing
+
+Contributions are welcome! Please fork the repository and create a pull request with your improvements.
+
+### Authors
+
+- [Davi Komura](https://github.com/davikomura) - Software Engineer
+
+```
