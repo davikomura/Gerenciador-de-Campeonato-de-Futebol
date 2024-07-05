@@ -1,7 +1,6 @@
-from simulator.simulate_championship import standings
-import pandas as pd
+from simulator.simulate_championship import standings, image_df
 
-def manage_championship(divisions):
+def manage_championship(divisions, output_img_dir='img'):
     # Store tables for each division
     tables = []
 
@@ -12,6 +11,8 @@ def manage_championship(divisions):
         print(f"Table of Division {i+1}:")
         print(division_table)
         print("\n")
+
+        image_df(division_table, f"img/tabela_divisao_{i+1}.png")
 
     # Perform promotions and relegations
     for i in range(len(divisions) - 1):

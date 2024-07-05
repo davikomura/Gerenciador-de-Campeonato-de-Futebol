@@ -1,7 +1,7 @@
 from random import randint
 import pandas as pd
 import numpy as np
-# import dataframe_image as dfi
+import dataframe_image as dfi
 
 def result(StrengthA, StrengthB):
     space = StrengthA + StrengthB
@@ -168,6 +168,7 @@ def standings(teams):
     
     return dfTable
 
-# def image_df(x, y):
-#     df = standings(x)
-#     dfi.export(df, y)
+def image_df(x, y):
+    # df = standings(x)
+    # dfi.export(df, y)
+    dfi.export(x, y)
